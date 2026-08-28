@@ -16,4 +16,11 @@ struct Canvas {
     void clear(Color c) {
         for (int i = 0; i < 32 * 32; i++) px[i] = c;
     }
+
+    // Non-owning Image view for raylib ExportImage / LoadTextureFromImage.
+    // The Image does not copy pixels; caller must keep Canvas alive.
+    Image toImage() const {
+        return Image{ const_cast<Color*>(px), 32, 32, 1,
+                      PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
+    }
 };

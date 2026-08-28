@@ -25,7 +25,25 @@ static_assert(kHairStyleCount == 3, "B5 requires exactly 3 hair styles");
 
 // Usable count excluding sentinel - prefer this over raw COUNT in loops.
 constexpr int kEyeStyleCount = static_cast<int>(EyeStyle::COUNT);
-static_assert(kEyeStyleCount == 3, "labels and switch in main.cpp/eyes.cpp assume 3 styles");
+static_assert(kEyeStyleCount == 3, "labels and switch in eyes.cpp assume 3 styles");
+
+inline const char* hairStyleName(HairStyle s) {
+    switch (s) {
+    case HairStyle::Spiky: return "spiky";
+    case HairStyle::Bob:   return "bob";
+    case HairStyle::Long:  return "long";
+    default:               return "unknown";
+    }
+}
+
+inline const char* eyeStyleName(EyeStyle s) {
+    switch (s) {
+    case EyeStyle::Round:  return "round";
+    case EyeStyle::Sharp:  return "sharp";
+    case EyeStyle::Sleepy: return "sleepy";
+    default:               return "unknown";
+    }
+}
 
 // Only columns 0-15 are authored; 16-31 are a mirrored copy. Every sprite
 // drawing routine writes through this single chokepoint.

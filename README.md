@@ -3,10 +3,13 @@
 A small C++ desktop app that procedurally generates 32x32 pixel-art anime-style
 avatars, with a live customizer UI for hair, eyes, and palette. Built for fun /
 vibe coding — not a serious engineering project, optimize for "looks cool fast"
-over architectural purity.
+over architectural purity. I am currently in my agentic ai prompt slop code boom era 
+and wanted to test how much I can do just by proompting my way through. If you are 
+a HR person and see this, hii!! Overall this is fun but this project is really tiny
+and I am surprised how much the combination of Opus 5 as planer and gpt 5.4 luna and 
+Muse Spark 1.2 can do. I mostly one-shot everything.
 
 ## Goals
-
 - Procedurally generate a chibi/anime-style pixel avatar face from rules, not
   premade art assets.
 - Let the user tweak hair style, eye style, and palette live via UI controls

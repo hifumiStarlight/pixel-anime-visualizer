@@ -7,20 +7,26 @@
 #include <string>
 
 static Texture2D uploadCanvas(const Canvas& canvas) {
-    Image image = { const_cast<Color*>(canvas.px), 32, 32, 1,
-                    PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
+    Image image = canvas.toImage();
     Texture2D texture = LoadTextureFromImage(image);
     SetTextureFilter(texture, TEXTURE_FILTER_POINT);
     return texture;
 }
 
+static void refreshTexture(Texture2D& texture, const Canvas& canvas) {
+    // 32x32 is tiny — UpdateTexture avoids the Unload/Load churn.
+    Image image = canvas.toImage();
+    UpdateTexture(texture, image.data);
+}
+
 int main(int argc, char** argv) {
     const char* screenshot = nullptr;
     bool exportTest = false;
-    for (int i = 1; i + 1 < argc; i++) {
-        if (strcmp(argv[i], "--shot") == 0) screenshot = argv[i + 1];
-    }
     for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--shot") == 0) {
+            if (i + 1 < argc && strncmp(argv[i + 1], "--", 2) != 0) screenshot = argv[i + 1];
+            else std::fprintf(stderr, "warning: --shot requires a file path\n");
+        }
         if (strcmp(argv[i], "--export-test") == 0) exportTest = true;
     }
 
@@ -31,13 +37,12 @@ int main(int argc, char** argv) {
     Canvas canvas = renderAvatar(config);
 
     if (exportTest) {
-        std::string savedPath;
-        std::string error;
-        if (!exportAvatarPng(canvas, savedPath, error)) {
-            std::fprintf(stderr, "%s\n", error.c_str());
+        ExportResult r = exportAvatarPng(canvas);
+        if (!r.ok) {
+            std::fprintf(stderr, "%s\n", r.error.c_str());
             return 1;
         }
-        std::printf("exported: %s\n", savedPath.c_str());
+        std::printf("exported: %s\n", r.path.c_str());
         return 0;
     }
 
@@ -49,6 +54,21 @@ int main(int argc, char** argv) {
     float statusSeconds = 0.0f;
 
     while (!WindowShouldClose()) {
+        // Keyboard shortcuts (mouse-free workflow): R randomize, E export.
+        bool shortcutChanged = false;
+        if (IsKeyPressed(KEY_R)) {
+            config = randomizeAll(rngState);
+            status = "Randomized";
+            statusSeconds = 1.5f;
+            shortcutChanged = true;
+        }
+        if (IsKeyPressed(KEY_E)) {
+            ExportResult r = exportAvatarPng(canvas);
+            if (r.ok) status = "Saved " + r.path;
+            else status = r.error;
+            statusSeconds = 2.5f;
+        }
+
         BeginDrawing();
         ClearBackground({ 24, 24, 32, 255 });
         DrawText("PIXEL ANIME AVATAR", 28, 18, 24, RAYWHITE);
@@ -56,15 +76,15 @@ int main(int argc, char** argv) {
                        { 0, 0 }, 0.0f, WHITE);
         DrawRectangleLines(28, 58, 512, 512, { 90, 90, 105, 255 });
 
-        bool changed = drawControlPanel({ 580, 18, 390, 560 }, config, rngState,
-                                         canvas, status, statusSeconds);
+        bool panelChanged = drawControlPanel({ 580, 18, 390, 560 }, config, rngState,
+                                             canvas, status, statusSeconds);
         EndDrawing();
 
+        bool changed = shortcutChanged || panelChanged;
         if (changed) {
             config = normalizeAvatarConfig(config);
             canvas = renderAvatar(config);
-            UnloadTexture(texture);
-            texture = uploadCanvas(canvas);
+            refreshTexture(texture, canvas);
         }
         if (statusSeconds > 0.0f) statusSeconds -= GetFrameTime();
         if (screenshot && frame++ == 30) {

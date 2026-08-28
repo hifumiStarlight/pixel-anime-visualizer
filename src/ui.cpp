@@ -8,17 +8,19 @@
 
 namespace {
 
-bool cycleButton(Rectangle bounds, const char* label, int& value, int count) {
-    if (!GuiButton(bounds, label)) return false;
-    value = (value + 1) % count;
-    return true;
-}
-
 template <typename Enum>
 bool cycleEnumButton(Rectangle bounds, const char* label, Enum& value, int count) {
     if (!GuiButton(bounds, label)) return false;
     int next = (static_cast<int>(value) + 1) % count;
     value = static_cast<Enum>(next);
+    return true;
+}
+
+bool cycleButton(Rectangle bounds, const char* label, int& value, int count) {
+    // Reuse the typed helper via a small adapter to avoid duplicating wrap logic.
+    // int is not an enum, so we forward through the same modular arithmetic.
+    if (!GuiButton(bounds, label)) return false;
+    value = (value + 1) % count;
     return true;
 }
 
@@ -49,8 +51,7 @@ bool drawControlPanel(Rectangle panel, AvatarConfig& config, uint32_t& rngState,
              "HAIR");
     y += 22;
     if (cycleEnumButton({ static_cast<float>(x), static_cast<float>(y), width * 0.48f, 30 },
-                     config.hairStyle == HairStyle::Spiky ? "spiky" :
-                     config.hairStyle == HairStyle::Bob ? "bob" : "long",
+                     hairStyleName(config.hairStyle),
                      config.hairStyle, kHairStyleCount)) {
         changed = true;
     }
@@ -62,8 +63,7 @@ bool drawControlPanel(Rectangle panel, AvatarConfig& config, uint32_t& rngState,
              "EYES");
     y += 22;
     if (cycleEnumButton({ static_cast<float>(x), static_cast<float>(y), width * 0.48f, 30 },
-                     config.eyeStyle == EyeStyle::Round ? "round" :
-                     config.eyeStyle == EyeStyle::Sharp ? "sharp" : "sleepy",
+                     eyeStyleName(config.eyeStyle),
                      config.eyeStyle, kEyeStyleCount)) changed = true;
     if (cycleButton({ static_cast<float>(x + width * 0.52f), static_cast<float>(y), width * 0.48f, 30 },
                      "next color", config.eyeColor, family.eyeCount)) changed = true;
@@ -79,16 +79,17 @@ bool drawControlPanel(Rectangle panel, AvatarConfig& config, uint32_t& rngState,
     y += 48;
     if (GuiButton({ static_cast<float>(x), static_cast<float>(y), static_cast<float>(width), 36 },
                    "EXPORT PNG")) {
-        if (exportAvatarPng(canvas, status, status)) {
-            status = "Saved " + status;
-        }
+        ExportResult r = exportAvatarPng(canvas);
+        if (r.ok) status = "Saved " + r.path;
+        else status = r.error;
         statusSeconds = 2.5f;
     }
     y += 52;
     GuiLabel({ static_cast<float>(x), static_cast<float>(y), static_cast<float>(width), 22 },
              TextFormat("seed: %u", config.seed));
     if (statusSeconds > 0.0f) {
-        DrawText(status.c_str(), x, y + 30, 16, status.rfind("Could", 0) == 0 ? RED : GREEN);
+        bool isError = !(status == "Randomized" || status.rfind("Saved ", 0) == 0);
+        DrawText(status.c_str(), x, y + 30, 16, isError ? RED : GREEN);
     }
     return changed;
 }

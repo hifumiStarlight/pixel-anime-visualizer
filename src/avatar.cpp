@@ -1,15 +1,6 @@
 #include "avatar.h"
 #include "rng.h"
 
-bool isValidAvatarConfig(const AvatarConfig& config) {
-    if (config.paletteFamily < 0 || config.paletteFamily >= kFamilyCount) return false;
-    if (static_cast<int>(config.hairStyle) < 0 || static_cast<int>(config.hairStyle) >= kHairStyleCount) return false;
-    if (static_cast<int>(config.eyeStyle) < 0 || static_cast<int>(config.eyeStyle) >= kEyeStyleCount) return false;
-    const PaletteFamily& family = families[config.paletteFamily];
-    return config.hairColor >= 0 && config.hairColor < family.hairCount &&
-           config.eyeColor >= 0 && config.eyeColor < family.eyeCount;
-}
-
 AvatarConfig normalizeAvatarConfig(AvatarConfig config) {
     if (config.paletteFamily < 0 || config.paletteFamily >= kFamilyCount) config.paletteFamily = 0;
     const PaletteFamily& family = families[config.paletteFamily];
@@ -20,6 +11,15 @@ AvatarConfig normalizeAvatarConfig(AvatarConfig config) {
     if (config.hairColor < 0 || config.hairColor >= family.hairCount) config.hairColor = 0;
     if (config.eyeColor < 0 || config.eyeColor >= family.eyeCount) config.eyeColor = 0;
     return config;
+}
+
+bool isValidAvatarConfig(const AvatarConfig& config) {
+    AvatarConfig n = normalizeAvatarConfig(config);
+    return n.paletteFamily == config.paletteFamily &&
+           n.hairStyle == config.hairStyle &&
+           n.eyeStyle == config.eyeStyle &&
+           n.hairColor == config.hairColor &&
+           n.eyeColor == config.eyeColor;
 }
 
 Canvas renderAvatar(const AvatarConfig& input) {
