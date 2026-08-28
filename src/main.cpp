@@ -1,164 +1,79 @@
 #include "raylib.h"
-#include "canvas.h"
-#include "palette.h"
-#include "generator.h"
+#include "avatar.h"
+#include "export.h"
+#include "ui.h"
 #include <cstdio>
 #include <cstring>
+#include <string>
 
-static Texture2D canvasTexture(const Canvas& c) {
-    // Explicit field init so a future raylib Image layout change breaks at compile
-    // time rather than silently. Data is not owned by Image - do not UnloadImage.
-    Image img{};
-    img.data = const_cast<void*>(static_cast<const void*>(c.data()));
-    img.width = 32;
-    img.height = 32;
-    img.mipmaps = 1;
-    img.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
-    Texture2D tex = LoadTextureFromImage(img);
-    SetTextureFilter(tex, TEXTURE_FILTER_POINT);
-    return tex;
-}
-
-static void dumpCanvas(const Canvas& c) {
-    Color order[64];
-    char sym[64];
-    int n = 0;
-    auto charFor = [&](Color col) -> char {
-        for (int i = 0; i < n; i++) {
-            if (order[i].r == col.r && order[i].g == col.g && order[i].b == col.b && order[i].a == col.a) return sym[i];
-        }
-        if (n >= 64) return '?';
-        char s;
-        if (n < 26) s = static_cast<char>('A' + n);
-        else if (n < 52) s = static_cast<char>('a' + (n - 26));
-        else if (n < 62) s = static_cast<char>('0' + (n - 52));
-        else s = (n == 62 ? '+' : '*');
-        order[n] = col;
-        sym[n] = s;
-        n++;
-        return s;
-    };
-    for (int y = 0; y < 32; y++) {
-        for (int x = 0; x < 32; x++) printf("%c", charFor(c.get(x, y)));
-        printf("\n");
-    }
-}
-
-static bool checkSymmetry(const Canvas& c) {
-    bool ok = true;
-    for (int y = 0; y < 32; y++) {
-        for (int x = 0; x < 16; x++) {
-            Color a = c.get(x, y), b = c.get(31 - x, y);
-            if (a.r != b.r || a.g != b.g || a.b != b.b || a.a != b.a) {
-                printf("ASYMMETRY at (%d,%d)\n", x, y);
-                ok = false;
-            }
-        }
-    }
-    printf("symmetry: %s\n", ok ? "OK" : "BROKEN");
-    return ok;
+static Texture2D uploadCanvas(const Canvas& canvas) {
+    Image image = { const_cast<Color*>(canvas.px), 32, 32, 1,
+                    PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
+    Texture2D texture = LoadTextureFromImage(image);
+    SetTextureFilter(texture, TEXTURE_FILTER_POINT);
+    return texture;
 }
 
 int main(int argc, char** argv) {
-    const char* shot = nullptr;
-    bool dump = false;
-    bool faceGrid = false;
+    const char* screenshot = nullptr;
+    bool exportTest = false;
+    for (int i = 1; i + 1 < argc; i++) {
+        if (strcmp(argv[i], "--shot") == 0) screenshot = argv[i + 1];
+    }
     for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "--shot") == 0) {
-            if (i + 1 < argc) shot = argv[++i];
-            else fprintf(stderr, "warning: --shot requires a file path\n");
-        } else if (strcmp(argv[i], "--dump") == 0) dump = true;
-        else if (strcmp(argv[i], "--face-grid") == 0) faceGrid = true;
-        else fprintf(stderr, "warning: unknown arg '%s'\n", argv[i]);
+        if (strcmp(argv[i], "--export-test") == 0) exportTest = true;
     }
 
-    Canvas faces[kFamilyCount];
-    for (int f = 0; f < kFamilyCount; f++) {
-        drawFace(faces[f], families[f]);
-        if (dump) {
-            printf("== %s ==\n", families[f].name);
-            checkSymmetry(faces[f]);
-            dumpCanvas(faces[f]);
+    AvatarConfig config = {
+        0, HairStyle::Spiky, 1, EyeStyle::Round, 0, 0xC0FFEEu
+    };
+    uint32_t rngState = 0x12345678u;
+    Canvas canvas = renderAvatar(config);
+
+    if (exportTest) {
+        std::string savedPath;
+        std::string error;
+        if (!exportAvatarPng(canvas, savedPath, error)) {
+            std::fprintf(stderr, "%s\n", error.c_str());
+            return 1;
         }
-    }
-    const PaletteFamily& family = families[0];
-    constexpr int styleCount = kEyeStyleCount;
-    static_assert(styleCount == 3, "labels below must match EyeStyle");
-    Canvas eyeFaces[styleCount];
-    for (int i = 0; i < styleCount; i++) {
-        drawFace(eyeFaces[i], family);
-        drawEyes(eyeFaces[i], static_cast<EyeStyle>(i), family.eyeColors[0], family);
-    }
-    if (dump) {
-        const char* labels[styleCount] = { "round", "sharp", "sleepy" };
-        static_assert(sizeof(labels) / sizeof(labels[0]) == static_cast<size_t>(kEyeStyleCount),
-                      "labels must cover every EyeStyle");
-        for (int i = 0; i < styleCount; i++) {
-            printf("== %s eyes ==\n", labels[i]);
-            checkSymmetry(eyeFaces[i]);
-        }
+        std::printf("exported: %s\n", savedPath.c_str());
         return 0;
     }
 
-    if (faceGrid) {
-        InitWindow(824, 340, "Pixel Anime Avatar Generator - face");
-        SetTargetFPS(60);
-        Texture2D faceTextures[kFamilyCount];
-        for (int f = 0; f < kFamilyCount; f++) faceTextures[f] = canvasTexture(faces[f]);
-
-        const int scale = 8;
-        Rectangle src = { 0, 0, 32, 32 };
-        Rectangle dst = { 0, 40, 32 * scale, 32 * scale };
-        int frame = 0;
-        while (!WindowShouldClose()) {
-            BeginDrawing();
-            ClearBackground({ 28, 28, 34, 255 });
-            for (int f = 0; f < kFamilyCount; f++) {
-                dst.x = 12 + f * (32 * scale + 16);
-                DrawTexturePro(faceTextures[f], src, dst, { 0, 0 }, 0.0f, WHITE);
-                DrawText(families[f].name, dst.x, 8, 20, WHITE);
-            }
-            EndDrawing();
-            if (shot && frame == 30) {
-                TakeScreenshot(shot);
-                break;
-            }
-            frame++;
-        }
-        for (int f = 0; f < kFamilyCount; f++) UnloadTexture(faceTextures[f]);
-        CloseWindow();
-        return 0;
-    }
-
-    InitWindow(824, 340, "Pixel Anime Avatar Generator - eyes");
+    InitWindow(1000, 620, "Pixel Anime Avatar Generator");
     SetTargetFPS(60);
-
-    Texture2D tex[styleCount];
-    for (int i = 0; i < styleCount; i++) tex[i] = canvasTexture(eyeFaces[i]);
-
-    const int scale = 8;
-    Rectangle src = { 0, 0, 32, 32 };
-    Rectangle dst = { 0, 40, 32 * scale, 32 * scale };
-
+    Texture2D texture = uploadCanvas(canvas);
     int frame = 0;
+    std::string status;
+    float statusSeconds = 0.0f;
+
     while (!WindowShouldClose()) {
         BeginDrawing();
-        ClearBackground({ 28, 28, 34, 255 });
-        for (int i = 0; i < styleCount; i++) {
-            dst.x = 12 + i * (32 * scale + 16);
-            DrawTexturePro(tex[i], src, dst, { 0, 0 }, 0.0f, WHITE);
-            const char* label = i == 0 ? "round" : i == 1 ? "sharp" : "sleepy";
-            DrawText(label, dst.x, 8, 20, WHITE);
-        }
+        ClearBackground({ 24, 24, 32, 255 });
+        DrawText("PIXEL ANIME AVATAR", 28, 18, 24, RAYWHITE);
+        DrawTexturePro(texture, { 0, 0, 32, 32 }, { 28, 58, 512, 512 },
+                       { 0, 0 }, 0.0f, WHITE);
+        DrawRectangleLines(28, 58, 512, 512, { 90, 90, 105, 255 });
+
+        bool changed = drawControlPanel({ 580, 18, 390, 560 }, config, rngState,
+                                         canvas, status, statusSeconds);
         EndDrawing();
-        if (shot && frame == 30) {
-            TakeScreenshot(shot);
+
+        if (changed) {
+            config = normalizeAvatarConfig(config);
+            canvas = renderAvatar(config);
+            UnloadTexture(texture);
+            texture = uploadCanvas(canvas);
+        }
+        if (statusSeconds > 0.0f) statusSeconds -= GetFrameTime();
+        if (screenshot && frame++ == 30) {
+            TakeScreenshot(screenshot);
             break;
         }
-        frame++;
     }
 
-    for (int i = 0; i < styleCount; i++) UnloadTexture(tex[i]);
+    UnloadTexture(texture);
     CloseWindow();
     return 0;
 }

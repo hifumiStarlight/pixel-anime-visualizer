@@ -13,11 +13,11 @@ updates the preview immediately, with no apply step.
 
 ## Steps
 
-- [ ] Add raygui via `FetchContent` (header-only; pin a tag compatible with
+- [x] Add raygui via `FetchContent` (header-only; pin a tag compatible with
       raylib 5.5). Define `RAYGUI_IMPLEMENTATION` in **exactly one** .cpp file
       — doing it in two is the classic link-error trap.
-- [ ] Widen the window: preview on the left, control panel on the right
-- [ ] Controls:
+- [x] Widen the window: preview on the left, control panel on the right
+- [x] Controls:
       - Palette family — cycle or dropdown
       - Hair style — cycle
       - Hair color — cycle (or a row of swatch buttons, nicer)
@@ -25,19 +25,19 @@ updates the preview immediately, with no apply step.
       - Eye color — cycle
       - **Randomize All** button
       - (Export button lands in B8 — leave space for it)
-- [ ] Re-render the Canvas and re-upload the texture **only when the config
+- [x] Re-render the Canvas and re-upload the texture **only when the config
       actually changed**, not every frame
-- [ ] Show the current seed as text somewhere — useful when a good avatar
+- [x] Show the current seed as text somewhere — useful when a good avatar
       appears and you want to keep it
-- [ ] Delete the B2 debug swatch view
+- [x] Delete the B2 debug swatch view
 
 ## Exit criteria
 
-- [ ] Every control changes the preview instantly
-- [ ] Randomize All rerolls everything at once
-- [ ] Cycling past the last option wraps to the first
-- [ ] Switching palette family doesn't leave an invalid color selected
-- [ ] Screenshot of the full app window
+- [x] Every control changes the preview instantly
+- [x] Randomize All rerolls everything at once
+- [x] Cycling past the last option wraps to the first
+- [x] Switching palette family doesn't leave an invalid color selected
+- [x] Screenshot of the full app window
 
 ## Notes
 

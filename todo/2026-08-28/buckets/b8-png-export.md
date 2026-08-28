@@ -18,23 +18,23 @@ adding one, so it survives restarts without any saved state.
 
 ## Steps
 
-- [ ] Create `./exports/` if it doesn't exist
-- [ ] Scan for existing `avatar_*.png` and pick the next free index
-- [ ] Export the **raw 32x32 Canvas**, not the scaled-up preview texture. Build
+- [x] Create `./exports/` if it doesn't exist
+- [x] Scan for existing `avatar_*.png` and pick the next free index
+- [x] Export the **raw 32x32 Canvas**, not the scaled-up preview texture. Build
       a fresh `Image` from the config's Canvas buffer and call
       `ExportImage`. Never read back the on-screen render target.
-- [ ] Add the Export PNG button to the panel
-- [ ] Flash the saved path on screen for a couple of seconds as confirmation
-- [ ] Handle failure (read-only folder, disk full) with a visible message
+- [x] Add the Export PNG button to the panel
+- [x] Flash the saved path on screen for a couple of seconds as confirmation
+- [x] Handle failure (read-only folder, disk full) with a visible message
       rather than silently doing nothing
 
 ## Exit criteria
 
-- [ ] Button writes a file
-- [ ] File opens in an image viewer and is **exactly 32x32**
-- [ ] Exported pixels match the preview exactly
-- [ ] Exporting twice produces two files, no overwrite
-- [ ] Alpha is correct — background transparent (or intentionally opaque, but
+- [x] Button writes a file
+- [x] File opens in an image viewer and is **exactly 32x32**
+- [x] Exported pixels match the preview exactly
+- [x] Exporting twice produces two files, no overwrite
+- [x] Alpha is correct — background transparent (or intentionally opaque, but
       decide, don't leave it accidental)
 
 ## Notes

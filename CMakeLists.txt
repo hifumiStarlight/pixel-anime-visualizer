@@ -15,6 +15,13 @@ FetchContent_Declare(raylib
 )
 FetchContent_MakeAvailable(raylib)
 
+FetchContent_Declare(raygui
+    GIT_REPOSITORY https://github.com/raysan5/raygui.git
+    GIT_TAG 4.0
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(raygui)
+
 add_executable(pixel_anime_visualizer
     src/main.cpp
     src/canvas.h
@@ -27,5 +34,10 @@ add_executable(pixel_anime_visualizer
     src/avatar.h
     src/avatar.cpp
     src/rng.h
+    src/ui.cpp
+    src/ui.h
+    src/export.cpp
+    src/export.h
 )
 target_link_libraries(pixel_anime_visualizer PRIVATE raylib)
+target_include_directories(pixel_anime_visualizer PRIVATE ${raygui_SOURCE_DIR}/src)

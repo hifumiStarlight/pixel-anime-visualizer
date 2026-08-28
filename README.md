@@ -30,6 +30,17 @@ over architectural purity.
   the window so pixels are chunky and visible; exported PNG is the raw 32x32
   (not the scaled-up version).
 
+## Build
+
+Use a Visual Studio 2022 x64 developer shell, then run:
+
+```text
+cmake -B build -G Ninja
+cmake --build build
+```
+
+Run `build/pixel_anime_visualizer.exe`. PNG exports are written to `exports/`.
+
 ## Sprite Spec
 
 - **Canvas size:** 32x32 pixels.
@@ -81,14 +92,14 @@ for v1 and can be added later.
 
 ## Definition of Done (v1)
 
-- [ ] App builds and runs via CMake with raylib
-- [ ] 32x32 canvas renders scaled up in a window
-- [ ] Hair generation is procedural, has at least 2-3 distinct styles, mirrors
+- [x] App builds and runs via CMake with raylib
+- [x] 32x32 canvas renders scaled up in a window
+- [x] Hair generation is procedural, has at least 2-3 distinct styles, mirrors
       correctly across the vertical axis
-- [ ] Eyes generation is procedural, has at least 2-3 distinct styles, mirrors
+- [x] Eyes generation is procedural, has at least 2-3 distinct styles, mirrors
       correctly across the vertical axis
-- [ ] Palette selection works and always produces coherent (non-chaotic)
+- [x] Palette selection works and always produces coherent (non-chaotic)
       color combinations
-- [ ] "Randomize all" button works
-- [ ] "Export PNG" saves the current 32x32 avatar (unscaled) to disk as a
+- [x] "Randomize all" button works
+- [x] "Export PNG" saves the current 32x32 avatar (unscaled) to disk as a
       valid PNG file

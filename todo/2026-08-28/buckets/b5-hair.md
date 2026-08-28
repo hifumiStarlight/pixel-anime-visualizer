@@ -32,24 +32,24 @@ Suggested styles:
 
 ## Steps
 
-- [ ] Define a per-style bounding region (min/max row and column extents)
-- [ ] Implement silhouette generation: seeded per-column height/extent values,
+- [x] Define a per-style bounding region (min/max row and column extents)
+- [x] Implement silhouette generation: seeded per-column height/extent values,
       clamped to the region
-- [ ] Apply the shared shading rule: hair base color, a darker tone near the
+- [x] Apply the shared shading rule: hair base color, a darker tone near the
       hairline and under overhangs, a lighter tone on the top-facing surface.
       Same light direction as B3.
-- [ ] Preserve the hairline over the forehead so the face still reads
-- [ ] Guarantee the eye rows are never overdrawn (draw hair before eyes, or
+- [x] Preserve the hairline over the forehead so the face still reads
+- [x] Guarantee the eye rows are never overdrawn (draw hair before eyes, or
       explicitly exclude the socket rows)
-- [ ] All writes through `setPixelMirrored`
+- [x] All writes through `setPixelMirrored`
 
 ## Exit criteria
 
-- [ ] Screenshot grid: 3 styles × 3 seeds = 9 avatars
+- [x] Screenshot grid: 3 styles × 3 seeds = 9 avatars
 - [ ] **Every** cell is a plausible avatar — no floating pixels, no hair
       covering the eyes, no gap between hair and scalp
-- [ ] The 3 styles are distinguishable by silhouette alone
-- [ ] Same seed + same style always produces identical pixels
+- [x] The 3 styles are distinguishable by silhouette alone
+- [x] Same seed + same style always produces identical pixels
 
 ## Notes
 

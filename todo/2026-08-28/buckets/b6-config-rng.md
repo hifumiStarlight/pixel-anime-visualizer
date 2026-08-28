@@ -33,23 +33,23 @@ doesn't belong to it.
 
 ## Steps
 
-- [ ] Define `AvatarConfig`
-- [ ] `src/rng.h`: small splitmix64 or xorshift32. Do **not** use
+- [x] Define `AvatarConfig`
+- [x] `src/rng.h`: small splitmix64 or xorshift32. Do **not** use
       `rand()` — its sequence isn't reproducible across runs/platforms, which
       breaks the determinism guarantee.
-- [ ] `renderAvatar`: pure function, config in, Canvas out. Calls face → hair →
+- [x] `renderAvatar`: pure function, config in, Canvas out. Calls face → hair →
       eyes in the order B5 established.
-- [ ] `randomizeAll`: pick family first, then pick color indices *within* that
+- [x] `randomizeAll`: pick family first, then pick color indices *within* that
       family, then styles, then a fresh seed
-- [ ] Clamp color indices when the family changes (a family may have fewer
+- [x] Clamp color indices when the family changes (a family may have fewer
       colors than the previously selected index)
 
 ## Exit criteria
 
-- [ ] Rendering the same config twice yields byte-identical Canvas buffers
-- [ ] Randomize 20 times: every result is coherent, none use off-palette colors
-- [ ] Changing only `seed` changes the hair silhouette but nothing else
-- [ ] Changing only `hairStyle` keeps the same seed's "feel" within the region
+- [x] Rendering the same config twice yields byte-identical Canvas buffers
+- [x] Randomize 20 times: every result is coherent, none use off-palette colors
+- [x] Changing only `seed` changes the hair silhouette but nothing else
+- [x] Changing only `hairStyle` keeps the same seed's "feel" within the region
 
 ## Notes
 
