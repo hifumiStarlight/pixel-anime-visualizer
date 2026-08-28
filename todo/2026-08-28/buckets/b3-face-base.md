@@ -26,23 +26,23 @@ construction.
 
 ## Steps
 
-- [ ] Implement `setPixelMirrored` with a debug assert on `x <= 15`
-- [ ] Draw the head silhouette: a chibi-proportioned rounded shape. Head should
+- [x] Implement `setPixelMirrored` with a debug assert on `x <= 15`
+- [x] Draw the head silhouette: a chibi-proportioned rounded shape. Head should
       dominate the canvas — roughly the top 2/3 — with a small neck and
       shoulder hint at the bottom.
-- [ ] Apply skin shading using the family's 3-tone ramp (base, shadow along one
+- [x] Apply skin shading using the family's 3-tone ramp (base, shadow along one
       edge, subtle highlight)
-- [ ] Outline the silhouette with `family.outline`
-- [ ] Leave the eye socket rows clearly identifiable — B4 needs a fixed,
+- [x] Outline the silhouette with `family.outline`
+- [x] Leave the eye socket rows clearly identifiable — B4 needs a fixed,
       documented anchor position. Write the chosen socket coordinates into a
       named constant, not a magic number at the call site.
 
 ## Exit criteria
 
-- [ ] Bald head renders on screen
-- [ ] Symmetry verified: for every row, pixel `(x,y) == (31-x,y)`
-- [ ] Switching palette family visibly changes the skin tone
-- [ ] Screenshot of the same head across all 3 families
+- [x] Bald head renders on screen
+- [x] Symmetry verified: for every row, pixel `(x,y) == (31-x,y)`
+- [x] Switching palette family visibly changes the skin tone
+- [x] Screenshot of the same head across all 3 families
 
 ## Notes
 

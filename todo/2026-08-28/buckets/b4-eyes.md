@@ -28,21 +28,21 @@ Each eye is roughly 3-4 px wide and 3-5 px tall at this canvas size.
 
 ## Steps
 
-- [ ] Implement the three styles as small parametrized routines
-- [ ] Every eye gets: lash/outline pixels, iris in `eyeColor`, and **one**
+- [x] Implement the three styles as small parametrized routines
+- [x] Every eye gets: lash/outline pixels, iris in `eyeColor`, and **one**
       highlight pixel. The highlight is what makes it read as anime rather than
       as a dot.
-- [ ] All writes go through `setPixelMirrored`
-- [ ] Only the eye color varies with user choice; lash and highlight come from
+- [x] All writes go through `setPixelMirrored`
+- [x] Only the eye color varies with user choice; lash and highlight come from
       the palette family
 
 ## Exit criteria
 
-- [ ] Screenshot showing all 3 styles on the same head
-- [ ] The three are distinguishable at 1x, not just zoomed in — if they only
+- [x] Screenshot showing all 3 styles on the same head
+- [x] The three are distinguishable at 1x, not just zoomed in — if they only
       differ when magnified, push the silhouettes further apart
-- [ ] Symmetry still holds
-- [ ] Eye color choice visibly changes the iris
+- [x] Symmetry still holds
+- [x] Eye color choice visibly changes the iris
 
 ## Notes
 

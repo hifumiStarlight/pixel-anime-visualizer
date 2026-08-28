@@ -14,15 +14,15 @@ logic exists.
 
 ## Steps
 
-- [ ] `CMakeLists.txt`:
+- [x] `CMakeLists.txt`:
       - `cmake_minimum_required(VERSION 3.20)`, C++17, single exe target
       - raylib via `FetchContent` with a **pinned** `GIT_TAG 5.5`
       - `set(BUILD_EXAMPLES OFF)` and `set(BUILD_GAMES OFF)` before
         `FetchContent_MakeAvailable` so we don't compile raylib's samples
-- [ ] `src/canvas.h`: `struct Canvas { Color px[32*32]; }` plus
+- [x] `src/canvas.h`: `struct Canvas { Color px[32*32]; }` plus
       `set(x,y,c)` / `get(x,y)` / `clear(c)` helpers. Plain data, no raylib
       windowing dependency beyond `Color`.
-- [ ] `src/main.cpp`:
+- [x] `src/main.cpp`:
       - `InitWindow`, 60 fps target
       - Fill a Canvas with a hardcoded recognizable blob (a filled circle or
         just a diagonal — anything clearly non-uniform)
@@ -33,10 +33,10 @@ logic exists.
 
 ## Exit criteria
 
-- [ ] `cmake -B build -G Ninja` configures cleanly
-- [ ] `cmake --build build` produces an exe
-- [ ] Window opens showing the blob with hard, visibly square pixels
-- [ ] Screenshot captured
+- [x] `cmake -B build -G Ninja` configures cleanly
+- [x] `cmake --build build` produces an exe
+- [x] Window opens showing the blob with hard, visibly square pixels
+- [x] Screenshot captured
 
 ## Notes
 

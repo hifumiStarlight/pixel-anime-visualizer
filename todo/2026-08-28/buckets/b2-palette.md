@@ -30,18 +30,18 @@ Ship 3 families. Suggested directions so they read as distinct at a glance:
 
 ## Steps
 
-- [ ] Define the struct and a `const PaletteFamily families[3]`
-- [ ] Pick colors by hand — do NOT generate them algorithmically, the README is
+- [x] Define the struct and a `const PaletteFamily families[3]`
+- [x] Pick colors by hand — do NOT generate them algorithmically, the README is
       explicit that these are curated
-- [ ] Prefer a slightly desaturated dark tone for `outline`; pure `#000` makes
+- [x] Prefer a slightly desaturated dark tone for `outline`; pure `#000` makes
       32x32 sprites look harsh
-- [ ] Add a **throwaway** debug view in `main.cpp` that draws every family's
+- [x] Add a **throwaway** debug view in `main.cpp` that draws every family's
       full swatch set as a grid
 
 ## Exit criteria
 
-- [ ] Screenshot of the swatch grid showing all 3 families
-- [ ] Eyeball check: within each family, any hair color × any eye color × the
+- [x] Screenshot of the swatch grid showing all 3 families
+- [x] Eyeball check: within each family, any hair color × any eye color × the
       skin ramp looks like it belongs together. If a combination clashes,
       remove that color now — B6's randomizer assumes every combination in a
       family is valid.
