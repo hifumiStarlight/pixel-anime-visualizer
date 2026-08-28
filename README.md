@@ -9,6 +9,26 @@ a HR person and see this, hii!! Overall this is fun but this project is really t
 and I am surprised how much the combination of Opus 5 as planer and gpt 5.4 luna and 
 Muse Spark 1.2 can do. I mostly one-shot everything.
 
+## Results
+
+The finished app combines a chunky, nearest-neighbor pixel preview with a compact
+control panel for live avatar changes:
+
+![Pixel Anime Avatar Generator UI](exports/b7-ui.png)
+
+Representative procedural avatar exports:
+
+<p>
+  <img src="exports/avatar_001.png" alt="Procedural pixel anime avatar export 1" width="128" height="128">
+  <img src="exports/avatar_003.png" alt="Procedural pixel anime avatar export 2" width="128" height="128">
+  <img src="exports/avatar_005.png" alt="Procedural pixel anime avatar export 3" width="128" height="128">
+</p>
+
+The v1 verification pass confirmed that the app builds from a clean CMake
+configuration, renders a scaled 32x32 canvas, produces distinct mirrored hair and
+eye variants, keeps palette combinations coherent, supports randomize-all, and
+exports valid unscaled 32x32 PNG files.
+
 ## Goals
 - Procedurally generate a chibi/anime-style pixel avatar face from rules, not
   premade art assets.
