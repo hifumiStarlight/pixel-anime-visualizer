@@ -23,5 +23,9 @@ add_executable(pixel_anime_visualizer
     src/generator.h
     src/generator.cpp
     src/eyes.cpp
+    src/hair.cpp
+    src/avatar.h
+    src/avatar.cpp
+    src/rng.h
 )
 target_link_libraries(pixel_anime_visualizer PRIVATE raylib)

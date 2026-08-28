@@ -15,4 +15,8 @@ struct PaletteFamily {
     Color outline;
 };
 
-extern const PaletteFamily families[];
+extern const PaletteFamily families[kFamilyCount];
+
+static_assert(kMaxPaletteColors >= 4 && kMaxPaletteColors <= 8,
+              "kMaxPaletteColors should allow 4-8 curated colors per B2");
+static_assert(kFamilyCount == 3, "B2 requires exactly 3 families");

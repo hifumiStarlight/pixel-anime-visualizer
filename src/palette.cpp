@@ -7,6 +7,8 @@ static Color hex(int h) {
              255 };
 }
 
+static_assert(kFamilyCount == 3, "families size must match palette.h");
+
 const PaletteFamily families[kFamilyCount] = {
     // warm / classic shounen: peachy skin, black-brown-to-red hair
     {

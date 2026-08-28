@@ -1,4 +1,5 @@
 #include "generator.h"
+#include <cassert>
 
 static void pixel(Canvas& c, int x, int y, Color color) {
     setPixelMirrored(c, x, y, color);
@@ -54,6 +55,10 @@ void drawEyes(Canvas& c, EyeStyle style, Color eyeColor, const PaletteFamily& fa
         break;
 
     case EyeStyle::COUNT:
+        assert(false && "EyeStyle::COUNT is a sentinel, not a drawable style");
+        break;
+    default:
+        assert(false && "unhandled EyeStyle");
         break;
     }
 }

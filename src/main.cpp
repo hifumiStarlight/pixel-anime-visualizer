@@ -6,7 +6,14 @@
 #include <cstring>
 
 static Texture2D canvasTexture(const Canvas& c) {
-    Image img = { (void*)c.px, 32, 32, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
+    // Explicit field init so a future raylib Image layout change breaks at compile
+    // time rather than silently. Data is not owned by Image - do not UnloadImage.
+    Image img{};
+    img.data = const_cast<void*>(static_cast<const void*>(c.data()));
+    img.width = 32;
+    img.height = 32;
+    img.mipmaps = 1;
+    img.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
     Texture2D tex = LoadTextureFromImage(img);
     SetTextureFilter(tex, TEXTURE_FILTER_POINT);
     return tex;
@@ -18,9 +25,14 @@ static void dumpCanvas(const Canvas& c) {
     int n = 0;
     auto charFor = [&](Color col) -> char {
         for (int i = 0; i < n; i++) {
-            if (order[i].r == col.r && order[i].g == col.g && order[i].b == col.b) return sym[i];
+            if (order[i].r == col.r && order[i].g == col.g && order[i].b == col.b && order[i].a == col.a) return sym[i];
         }
-        char s = 'A' + n;
+        if (n >= 64) return '?';
+        char s;
+        if (n < 26) s = static_cast<char>('A' + n);
+        else if (n < 52) s = static_cast<char>('a' + (n - 26));
+        else if (n < 62) s = static_cast<char>('0' + (n - 52));
+        else s = (n == 62 ? '+' : '*');
         order[n] = col;
         sym[n] = s;
         n++;
@@ -52,9 +64,12 @@ int main(int argc, char** argv) {
     bool dump = false;
     bool faceGrid = false;
     for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "--shot") == 0 && i + 1 < argc) shot = argv[i + 1];
-        if (strcmp(argv[i], "--dump") == 0) dump = true;
-        if (strcmp(argv[i], "--face-grid") == 0) faceGrid = true;
+        if (strcmp(argv[i], "--shot") == 0) {
+            if (i + 1 < argc) shot = argv[++i];
+            else fprintf(stderr, "warning: --shot requires a file path\n");
+        } else if (strcmp(argv[i], "--dump") == 0) dump = true;
+        else if (strcmp(argv[i], "--face-grid") == 0) faceGrid = true;
+        else fprintf(stderr, "warning: unknown arg '%s'\n", argv[i]);
     }
 
     Canvas faces[kFamilyCount];
@@ -67,7 +82,8 @@ int main(int argc, char** argv) {
         }
     }
     const PaletteFamily& family = families[0];
-    constexpr int styleCount = static_cast<int>(EyeStyle::COUNT);
+    constexpr int styleCount = kEyeStyleCount;
+    static_assert(styleCount == 3, "labels below must match EyeStyle");
     Canvas eyeFaces[styleCount];
     for (int i = 0; i < styleCount; i++) {
         drawFace(eyeFaces[i], family);
@@ -75,6 +91,8 @@ int main(int argc, char** argv) {
     }
     if (dump) {
         const char* labels[styleCount] = { "round", "sharp", "sleepy" };
+        static_assert(sizeof(labels) / sizeof(labels[0]) == static_cast<size_t>(kEyeStyleCount),
+                      "labels must cover every EyeStyle");
         for (int i = 0; i < styleCount; i++) {
             printf("== %s eyes ==\n", labels[i]);
             checkSymmetry(eyeFaces[i]);
