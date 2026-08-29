@@ -9,6 +9,7 @@ struct AvatarConfig {
     int hairColor;
     EyeStyle eyeStyle;
     int eyeColor;
+    MouthStyle mouthStyle;
     uint32_t seed;
 };
 

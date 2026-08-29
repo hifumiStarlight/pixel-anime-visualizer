@@ -31,8 +31,11 @@ add_executable(pixel_anime_visualizer
     src/generator.cpp
     src/eyes.cpp
     src/hair.cpp
+    src/mouth.cpp
     src/avatar.h
     src/avatar.cpp
+    src/config_io.h
+    src/config_io.cpp
     src/rng.h
     src/ui.cpp
     src/ui.h

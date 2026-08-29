@@ -32,16 +32,15 @@ exports valid unscaled 32x32 PNG files.
 ## Goals
 - Procedurally generate a chibi/anime-style pixel avatar face from rules, not
   premade art assets.
-- Let the user tweak hair style, eye style, and palette live via UI controls
-  and immediately see the result.
+- Let the user tweak hair style, eye style, mouth style, and palette live via
+  UI controls and immediately see the result.
 - Export the current avatar as a PNG.
 
 ## Non-goals (v1)
 
-- No mouth, face shape, or accessory customization yet (hair + eyes + palette
+- No face shape or accessory customization yet (hair, eyes, mouth, and palette
   only).
-- No animation, no full-body sprites, no saving/loading a config file — only
-  PNG export.
+- No animation and no full-body sprites — the avatar is a single static face.
 - No networking, no asset packs, no sprite sheets from external artists.
 
 ## Tech Stack
@@ -73,8 +72,8 @@ Run `build/pixel_anime_visualizer.exe`. PNG exports are written to `exports/`.
 - **Generation approach:** Fully procedural / rule-based pixel placement — no
   premade sprite/asset library. Hair and eyes are drawn by small deterministic
   or randomized algorithms (e.g. hair = randomized silhouette within allowed
-  bounding region + fixed base shading rule; eyes = a small parametrized
-  shape drawn at a fixed eye-socket position).
+  bounding region + fixed base shading rule; eyes and mouth = small
+  parametrized shapes drawn at fixed socket positions).
 - **Palette:** Fixed, curated anime-style palette(s) baked into the program
   (skin tones, hair colors, eye colors chosen to look coherent together —
   not arbitrary RGB). A "randomize" action picks a valid combination from
@@ -88,9 +87,11 @@ Run `build/pixel_anime_visualizer.exe`. PNG exports are written to `exports/`.
    + eye color (from the curated palette).
 3. **Palette** — overall color scheme selection (skin tone + which curated
    palette family hair/eye colors are drawn from).
+4. **Mouth** — style/shape (a small enumerated set of procedural mouth
+   shapes), drawn in the family's outline tone on the chin.
 
-Everything else (face shape, mouth, accessories) is explicitly out of scope
-for v1 and can be added later.
+Everything else (face shape, accessories) is explicitly out of scope for v1 and
+can be added later.
 
 ## Interaction Loop
 
@@ -100,15 +101,17 @@ for v1 and can be added later.
   raylib immediate-mode GUI or similar) let the user:
   - Cycle/select hair style and hair color
   - Cycle/select eye style and eye color
+  - Cycle/select mouth style
   - Cycle/select palette family
   - Trigger "randomize all" for a full reroll
   - Trigger "export PNG" to save the current avatar to disk
 - Every change updates the preview immediately (no separate "apply" step).
+- The last avatar is saved to `avatar.ini` (next to the exe) on exit and
+  reloaded on the next launch, so the app remembers where you left off.
 
 ## Out of Scope / Explicitly Deferred Ideas (for later, not v1)
 
-- Mouth, face shape, blush, glasses, earrings, other accessories
-- Remembering/reloading last config on relaunch
+- Face shape, blush, glasses, earrings, other accessories
 - Full color randomization outside the curated palette
 - Any animation or multiple expression states
 - Any asset-based (non-procedural) generation

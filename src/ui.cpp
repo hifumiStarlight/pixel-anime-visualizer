@@ -67,6 +67,14 @@ bool drawControlPanel(Rectangle panel, AvatarConfig& config, uint32_t& rngState,
                      config.eyeStyle, kEyeStyleCount)) changed = true;
     if (cycleButton({ static_cast<float>(x + width * 0.52f), static_cast<float>(y), width * 0.48f, 30 },
                      "next color", config.eyeColor, family.eyeCount)) changed = true;
+    y += rowHeight + 8;
+
+    GuiLabel({ static_cast<float>(x), static_cast<float>(y), static_cast<float>(width), 20 },
+             "MOUTH");
+    y += 22;
+    if (cycleEnumButton({ static_cast<float>(x), static_cast<float>(y), static_cast<float>(width), 30 },
+                     mouthStyleName(config.mouthStyle),
+                     config.mouthStyle, kMouthStyleCount)) changed = true;
     y += rowHeight + 12;
 
     if (GuiButton({ static_cast<float>(x), static_cast<float>(y), static_cast<float>(width), 36 },

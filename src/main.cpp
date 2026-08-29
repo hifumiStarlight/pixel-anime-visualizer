@@ -1,10 +1,15 @@
 #include "raylib.h"
 #include "avatar.h"
+#include "config_io.h"
 #include "export.h"
 #include "ui.h"
 #include <cstdio>
 #include <cstring>
 #include <string>
+
+static AvatarConfig defaultConfig() {
+    return { 0, HairStyle::Spiky, 1, EyeStyle::Round, 0, MouthStyle::Neutral, 0xC0FFEEu };
+}
 
 static Texture2D uploadCanvas(const Canvas& canvas) {
     Image image = canvas.toImage();
@@ -30,9 +35,7 @@ int main(int argc, char** argv) {
         if (strcmp(argv[i], "--export-test") == 0) exportTest = true;
     }
 
-    AvatarConfig config = {
-        0, HairStyle::Spiky, 1, EyeStyle::Round, 0, 0xC0FFEEu
-    };
+    AvatarConfig config = defaultConfig();
     uint32_t rngState = 0x12345678u;
     Canvas canvas = renderAvatar(config);
 
@@ -45,6 +48,13 @@ int main(int argc, char** argv) {
         std::printf("exported: %s\n", r.path.c_str());
         return 0;
     }
+
+    // Remember the last avatar: load next to the exe (not the shell's cwd).
+    // A missing or corrupt file falls back to the fixed default, never crashes.
+    const std::string configPath =
+        std::string(GetApplicationDirectory()) + "avatar.ini";
+    if (!loadConfig(configPath.c_str(), config)) config = defaultConfig();
+    canvas = renderAvatar(config);
 
     InitWindow(1000, 620, "Pixel Anime Avatar Generator");
     SetTargetFPS(60);
@@ -92,6 +102,9 @@ int main(int argc, char** argv) {
             break;
         }
     }
+
+    // Persist the last avatar on exit so the next launch starts where we left.
+    saveConfig(configPath.c_str(), config);
 
     UnloadTexture(texture);
     CloseWindow();
